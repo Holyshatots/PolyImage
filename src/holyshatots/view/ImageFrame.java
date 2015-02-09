@@ -114,7 +114,8 @@ public class ImageFrame extends JFrame
 	
 	public int getNumberOfPointsFromUser()
 	{
-		String inputValue = JOptionPane.showInputDialog("How many points? (default = 2000)");
+		String inputValue = "";
+		inputValue = JOptionPane.showInputDialog("How many points? (default = 2000)");
 		if(inputValue.equals(""))
 		{
 			// If no input use the default number of points
