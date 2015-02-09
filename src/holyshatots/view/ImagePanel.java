@@ -26,9 +26,21 @@ public class ImagePanel extends JPanel
     	this.image = image;
     }
     
+    public ImagePanel(AppController controller)
+    {
+    	this.controller = controller;
+    }
+    
     public void setNewImage(BufferedImage image)
     {
     	this.image = image;
+    	setSize(image.getWidth(), image.getHeight());
+    	repaint();
+    }
+    
+    public BufferedImage getCurrentImage()
+    {
+    	return this.image;
     }
     
     /* Higher Level Drawing Methods */
@@ -40,10 +52,13 @@ public class ImagePanel extends JPanel
      */
     public void paintComponent (Graphics g) {
         super.paintComponent(g);
-        this.g = g;
-		Graphics2D g2d = (Graphics2D) g.create();
-		g2d.drawImage(image, 0, 0, this);
-		g2d.dispose();
+        if(image != null)
+        {
+	        this.g = g;
+			Graphics2D g2d = (Graphics2D) g.create();
+			g2d.drawImage(image, 0, 0, this);
+			g2d.dispose();
+        }
     }
     
     
