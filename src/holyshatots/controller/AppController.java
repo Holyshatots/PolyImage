@@ -26,10 +26,15 @@ public class AppController
 
 	private ImageFrame imageFrame;
 	
+	private int gradientWidth;
+	private int gradientHeight;
+	
 	public AppController()
 	{
 		this.numberOfPoints = defaultNumberOfPoints;
 		imageFrame = new ImageFrame(this);
+		gradientWidth = 200;
+		gradientHeight = 200;
 	}
 	
 	public void run() throws IOException
@@ -42,6 +47,16 @@ public class AppController
 		 */
 		
 
+	}
+	
+	public int getGradientWidth()
+	{
+		return this.gradientWidth;
+	}
+	
+	public int getGradientHeight()
+	{
+		return this.gradientHeight;
 	}
 	
 	public int getDefaultNumberOfPoints()

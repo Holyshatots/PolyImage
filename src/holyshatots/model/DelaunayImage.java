@@ -63,6 +63,31 @@ public class DelaunayImage
 		return this.image;
 	}
 	
+	public BufferedImage renderDelaunay(int numberOfPoints)
+	{
+		if(this.image != null)
+		{
+			// Get random points that are weighted based on the color differences in
+			// the image. 
+			Random random = new Random();
+			for(int i=0; i < numberOfPoints; i++)
+			{
+				addSite(new Pnt((double) this.image.getWidth() * random.nextDouble(), (double) this.image.getHeight() * random.nextDouble()));
+			}
+			// Use the random points to create a delaunay triangulation.
+			// Draw filled polygons/ triangles with the color set to the middle
+			// of the triangle.
+			drawAllDelaunay(true);
+
+			// Return the finished image
+			return this.image;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 	/**
 	 * Takes in a buffered image and does a delaunay triangulation with
 	 * coloring on it

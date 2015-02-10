@@ -3,7 +3,7 @@ package holyshatots.view;
 import holyshatots.controller.AppController;
 import holyshatots.model.DelaunayImage;
 
-import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -23,12 +25,18 @@ public class ImageFrame extends JFrame
 {
 	private JMenuBar menuBar;
 	private JMenu file;
+	private JMenuItem newFileMenu;
 	private JMenuItem openFileMenu;
 	private JMenuItem saveFileMenu;
+	private JMenuItem exitFileMenu;
+	
+	private JMenu edit;
+	private JMenuItem pointsChangeMenu;
 	private AppController controller;
 	private BufferedImage image;
 	private String imagePath;
 	private ImagePanel imagePanel;
+
 
 	public ImageFrame(AppController controller)
 	{
@@ -43,27 +51,43 @@ public class ImageFrame extends JFrame
 		setResizable(false);
 		
 		menuBar = new JMenuBar();
-		file = new JMenu("File") ;
+		file = new JMenu("File");
+		edit = new JMenu("Edit");
 		
+		newFileMenu = new JMenuItem("New");
 		openFileMenu = new JMenuItem("Open");
+		saveFileMenu = new JMenuItem("Save");
+		exitFileMenu = new JMenuItem("Exit");
 		openFileMenu.setToolTipText("Open a new file");
 		
-		saveFileMenu = new JMenuItem("Save");
+		pointsChangeMenu = new JMenuItem("Edit number of points");
 		
 		setupListeners();
 		
 		menuBar.add(file);
+		file.add(newFileMenu);
 		file.add(openFileMenu);
 		file.add(saveFileMenu);
+		file.add(exitFileMenu);
 		
 		setJMenuBar(menuBar);
 		add(imagePanel);
 		
 		setVisible(true);
 	}
-
+	
 	private void setupListeners()
 	{
+		newFileMenu.addActionListener(new ActionListener()
+		{
+
+			public void actionPerformed(ActionEvent event)
+			{
+				
+			}
+			
+		});
+		
 		openFileMenu.addActionListener(new ActionListener()
 		{
 
@@ -83,12 +107,28 @@ public class ImageFrame extends JFrame
 			}
 			
 		});
+		
+		exitFileMenu.addActionListener(new ActionListener()
+		{
+
+			public void actionPerformed(ActionEvent event)
+			{
+				System.exit(0);
+			}
+			
+		});
 	}
+	
+
 	
 	public void openImage()
 	{
 		BufferedImage tempImage = getNewImageFromUser();
+		imagePanel.displayActivityIndicator(true);
+		DelaunayImage delaunayImage = new DelaunayImage(controller, tempImage, controller.getNumberOfPoints());
+		tempImage = delaunayImage.getImage();
 		setSize(tempImage.getWidth(), tempImage.getHeight());
+		imagePanel.displayActivityIndicator(false);
 		imagePanel.setNewImage(tempImage);
 	}
 	
@@ -127,7 +167,6 @@ public class ImageFrame extends JFrame
 	
 	public BufferedImage getNewImageFromUser()
 	{
-		DelaunayImage delaunayImage;
 	   JFileChooser chooser = new JFileChooser();
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "Images", "jpg", "gif", "png", "wmv", "mpg" ,".mpeg", ".mp1", ".mp2", ".mp3", ".m1v", ".m1a", ".m2a", ".mpa", ".mpv");
@@ -144,14 +183,11 @@ public class ImageFrame extends JFrame
 		}
 		catch (IOException e)
 		{
-			
+			// Could not read file
 		}
-		
+	
 		controller.setNumberOfPoints(getNumberOfPointsFromUser());
-		
-		delaunayImage = new DelaunayImage(controller, image, controller.getNumberOfPoints());
-		image = delaunayImage.renderDelaunay(image, controller.getNumberOfPoints());
-	    
+
 	    return image;
 	}
 }
