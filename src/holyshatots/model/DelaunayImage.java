@@ -102,11 +102,8 @@ public class DelaunayImage
 		}
 		// Get random points that are weighted based on the color differences in
 		// the image. 
-		Random random = new Random();
-		for(int i=0; i < numberOfPoints; i++)
-		{
-			addSite(new Pnt((double) this.image.getWidth() * random.nextDouble(), (double) this.image.getHeight() * random.nextDouble()));
-		}
+		addRandomPoints(numberOfPoints);
+
 		// Use the random points to create a delaunay triangulation.
 		// Draw filled polygons/ triangles with the color set to the middle
 		// of the triangle.
@@ -115,6 +112,111 @@ public class DelaunayImage
 		// Return the finished image
 		return this.image;
 
+	}
+	
+	private void addRandomPoints(int numberOfPoints)
+
+	{
+		// idea:
+		// Get the average color of the entire picture
+		// Create an array of weights by subtracting the pixel value from the average value of the entire picture
+		// Generate points based on the weights
+		Random random = new Random();
+		
+		double[][] weightedPixels = getWeightedPixels();
+
+		// Determine maximum roll possible
+		double maxRoll = 0.0d;
+		double roll;
+		
+		for(int row = 0; row < weightedPixels.length; row++)
+		{
+			for(int column = 0; column < weightedPixels[0].length; column++)
+			{
+				maxRoll += weightedPixels[row][column];
+			}
+		}
+		
+		// For every point that needs to be generated, choose a random pixel based on the weight
+		for(int i=0; i < numberOfPoints; i++)
+		{
+//			addSite(new Pnt((double) this.image.getWidth() * random.nextDouble(), (double) this.image.getHeight() * random.nextDouble()));
+			
+			roll = random.nextDouble() * maxRoll;
+			for (int row = 0; row < weightedPixels.length; row++)
+			{
+				for (int column = 0; column < weightedPixels[0].length; column++)
+				{
+					roll -= weightedPixels[row][column];
+					if (roll < 0)
+					{
+						addSite(new Pnt((double) row, (double) column));
+						break;
+					}
+				}
+				
+				if(roll < 0)
+				{
+					break;
+				}
+			}
+		}	
+	}
+	
+
+	/**
+	 * Return an array of ints that represent weights based on the difference of this color 
+	 * and the average color of the image
+	 * @return
+	 */
+	private double[][] getWeightedPixels()
+	{
+		double[][] weightedPixels = new double[image.getWidth()][image.getHeight()];
+	
+		int averageRGB = getAverageColorOfImage();
+		
+		for(int row = 0; row < image.getWidth(); row++)
+		{
+			for(int column = 0; column < image.getHeight(); column++)
+			{
+				weightedPixels[row][column] = Math.abs(averageRGB + image.getRGB(row, column)) / 100;
+				
+			}
+		}
+		return weightedPixels;
+	}
+	
+	/**
+	 * Instead of using the average color of the image like in getWeightedPixels(),
+	 * use the average color of the pixels that are surrounding the current pixel
+	 * @return
+	 */
+	private double[][] getWeightedPixelsLocal()
+	{
+		double[][] weightedPixels = new double[image.getWidth()][image.getHeight()];
+		
+		return weightedPixels;
+	}
+
+	/**
+	 * Gets the average RGB value of the image.
+	 * @return
+	 */
+	private int getAverageColorOfImage()
+	{	
+		int averageColor;
+		int totalRGB = 0;
+		for(int row = 0; row < image.getWidth(); row++)
+		{
+			for(int column=0; column < image.getHeight(); column++)
+			{
+				totalRGB += image.getRGB(row, column);
+			}
+		}
+		
+		averageColor = totalRGB / (image.getWidth() * image.getHeight());
+		
+		return averageColor;
 	}
 	
     /**
