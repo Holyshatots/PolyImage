@@ -77,7 +77,8 @@ public class DelaunayImage
 			// Use the random points to create a delaunay triangulation.
 			// Draw filled polygons/ triangles with the color set to the middle
 			// of the triangle.
-			drawAllDelaunay(true);
+			//drawAllDelaunay(true);
+			drawAllVoronoi(true, false);
 
 			// Return the finished image
 			return this.image;
@@ -107,7 +108,8 @@ public class DelaunayImage
 		// Use the random points to create a delaunay triangulation.
 		// Draw filled polygons/ triangles with the color set to the middle
 		// of the triangle.
-		drawAllDelaunay(true);
+		//drawAllDelaunay(true);
+		drawAllVoronoi(true, false);
 
 		// Return the finished image
 		return this.image;
@@ -239,10 +241,10 @@ public class DelaunayImage
      * @param item we want the color for this item
      * @return item's color
      */
-    private Color getColor (Object item) 
+    private Color getColor (Pnt item) 
     {
         if (colorTable.containsKey(item)) return colorTable.get(item);
-        Color color = new Color(Color.HSBtoRGB(random.nextFloat(), 1.0f, 1.0f));
+        Color color = new Color(image.getRGB((int) item.coord(0), (int) item.coord(1)));
         colorTable.put(item, color);
         return color;
     }
